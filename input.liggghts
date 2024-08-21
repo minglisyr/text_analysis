@@ -2,8 +2,8 @@
 atom_style	granular		        #Simulation of particles
 boundary	f f f			        #fixed boundaries -> particles will be deleted if leaving the simulation box
 units		si
-communicate	single vel yes	                #default
-newton		off				#default
+communicate	single vel yes	        #default
+newton		off				        #default
 
 ###################################System variables##################################################################
 #Definition of boundaries
@@ -63,34 +63,34 @@ variable	radius4	equal	0.00325	#m
 variable	radius5	equal	0.00300	#m
 
 variable	frac1	equal	0.05	#5%
-variable	frac2	equal	0.2	#20%
-variable	frac3	equal	0.5	#50%
-variable	frac4	equal	0.2	#20%
+variable	frac2	equal	0.2	    #20%
+variable	frac3	equal	0.5	    #50%
+variable	frac4	equal	0.2	    #20%
 variable	frac5	equal	0.05	#5%
 
 variable	density	equal	1200	#kg/m³
 
 ####filling parameters####
-variable	filltime	equal	180		        #seconds	#filltime = discharge time, we fill and discharge at the same time
-variable	fillmass	equal	72  	                #kg             #input for filled mass
-variable	fillmassrate	equal	${fillmass}/${filltime}	#kg/s           #calculate fill rate
-variable	fillsteps	equal	${filltime}/${dt}		        #Transform time to iteration steps
+variable	filltime	equal	180		                        #seconds	    #filltime = discharge time, we fill and discharge at the same time
+variable	fillmass	equal	72  	                        #kg             #input for filled mass
+variable	fillmassrate	equal	${fillmass}/${filltime}	    #kg/s           #calculate fill rate
+variable	fillsteps	equal	${filltime}/${dt}		                        #Transform time to iteration steps
 
 ####screw velocities####
-variable	screwPeriod	equal	(60/150)                #s	        #Period of the srew rotation (time for 1 rotation) (formula = 60/RPM)
+variable	screwPeriod	equal	(60/150)                        #s	            #Period of the srew rotation (time for 1 rotation) (formula = 60/RPM)
 
 ###################################Definition of simulationbox#######################################################
 region		reg block ${xmin} ${xmax} ${ymin} ${ymax} ${zmin} ${zmax} units box
 create_box	2 reg
-neighbor	0.004 bin		#default
+neighbor	0.004 bin		        #default
 neigh_modify	delay 0		        #default
 
 #################################Definition of the contact models####################################################
 pair_style gran model hertz tangential history rolling_friction epsd2   #contact model
-pair_coeff	* *				                        #default
+pair_coeff	* *				                                            #default
 timestep ${dt}
-fix	integrator      all nve/sphere			                #default
-fix	gravi           all gravity 9.81 vector 0.0 -1.0 0.0	        #gravity of 9.81 m/s² in negative y direction
+fix	integrator      all nve/sphere			                            #default
+fix	gravi           all gravity 9.81 vector 0.0 -1.0 0.0	            #gravity of 9.81 m/s² in negative y direction
 
 ###################################Definition of Material properties#################################################
 fix 	m1              all property/global youngsModulus peratomtype ${youngmodulus1} ${youngmodulus2}
@@ -100,7 +100,7 @@ fix 	m4              all property/global coefficientFriction peratomtypepair ${n
 fix 	m5              all property/global coefficientRollingFriction peratomtypepair ${natoms} ${rf11} ${rf12} ${rf21} ${rf22}
 
 ###################################Generation and Loading of the Geometry .stl#######################################
-fix	pipe 	        all mesh/surface file Pipe.stl 	  type 2 scale 0.001	                                                                        #load pipe
+fix	pipe 	        all mesh/surface file Pipe.stl 	  type 2 scale 0.001	                                            #load pipe
 fix	screw01	        all mesh/surface file Screw01.stl type 2 scale 0.001								                #Load screw01
 fix	screw02	        all mesh/surface file Screw02.stl type 2 scale 0.001								                #Load screw02
 fix	screw03	        all mesh/surface file Screw03.stl type 2 scale 0.001								                #Load screw03
@@ -115,9 +115,9 @@ fix	screw11	        all mesh/surface file Screw11.stl type 2 scale 0.001								
 fix	screw12	        all mesh/surface file Screw12.stl type 2 scale 0.001								                #Load screw12
 
 fix 	walls 	all wall/gran model hertz tangential history rolling_friction epsd2 mesh n_meshes 13 meshes pipe screw01 screw02 &
-                        screw03 screw04 screw05 screw06 screw07 screw08 screw09 screw10 screw11 screw12                                                 #Load walls
+                        screw03 screw04 screw05 screw06 screw07 screw08 screw09 screw10 screw11 screw12                         #Load walls
 
-fix	movescrew01     all move/mesh mesh screw01 rotate origin	0.0	-0.04568829	-0.01224214	axis -1. 0. 0. period  ${screwPeriod}	#Rotation of screw01
+fix	movescrew01 all move/mesh mesh screw01 rotate origin	0.0	-0.04568829	-0.01224214	axis -1. 0. 0. period  ${screwPeriod}	#Rotation of screw01
 fix	movescrew02	all move/mesh mesh screw02 rotate origin	0.0	-0.03344615	-0.03344615	axis -1. 0. 0. period  ${screwPeriod}	#Rotation of screw02
 fix	movescrew03	all move/mesh mesh screw03 rotate origin	0.0	-0.01224214	-0.04568829	axis -1. 0. 0. period  ${screwPeriod}	#Rotation of screw03
 fix	movescrew04	all move/mesh mesh screw04 rotate origin	0.0	0.01224214	-0.04568829	axis -1. 0. 0. period  ${screwPeriod}	#Rotation of screw04
@@ -150,10 +150,10 @@ shell 	mkdir post
 
 #Definition of the dumptime
 variable dumptime equal 0.05	                #Every 0.05 s 1 image 
-variable dumpstep equal ${dumptime}/${dt}	#Transform to iteration steps
+variable dumpstep equal ${dumptime}/${dt}	    #Transform to iteration steps
 
 dump	dmpparticle     all custom ${dumpstep}          post/particles_*.liggghts id type x y z vx vy vz fx fy fz radius mass                #dump particles
-dump	dmppipe         all mesh/stl ${dumpstep}        post/pipe_*.stl pipe 		                                                     #dump pipe
+dump	dmppipe         all mesh/stl ${dumpstep}        post/pipe_*.stl pipe 		                                                         #dump pipe
 dump	dmpscrews       all mesh/stl ${dumpstep}        post/screws_*.stl screw01 screw02 screw03 screw04 screw05 screw06 screw07 &
                                                                         screw08 screw09 screw10 screw11 screw12                              #dump all screws
 
