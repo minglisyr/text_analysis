@@ -10,7 +10,7 @@ newton		off				#default
 variable xmin equal -0.01		
 variable xmax equal 1.8		
 
-variable ymin equal -0.1
+variable ymin equal -0.065
 variable ymax equal 0.1
 
 variable zmin equal -0.065
