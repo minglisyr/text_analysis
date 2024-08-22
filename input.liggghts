@@ -68,7 +68,7 @@ variable	frac3	equal	0.5	    #50%
 variable	frac4	equal	0.2	    #20%
 variable	frac5	equal	0.05	#5%
 
-variable	density	equal	1200	#kg/m³
+variable	density	equal	1200	#kg/m^3
 
 ####filling parameters####
 variable	filltime	equal	180		                        #seconds	    #filltime = discharge time, we fill and discharge at the same time
@@ -90,7 +90,7 @@ pair_style gran model hertz tangential history rolling_friction epsd2   #contact
 pair_coeff	* *				                                            #default
 timestep ${dt}
 fix	integrator      all nve/sphere			                            #default
-fix	gravi           all gravity 9.81 vector 0.0 -1.0 0.0	            #gravity of 9.81 m/s² in negative y direction
+fix	gravi           all gravity 9.81 vector 0.0 -1.0 0.0	            #gravity of 9.81 m/s^2 in negative y direction
 
 ###################################Definition of Material properties#################################################
 fix 	m1              all property/global youngsModulus peratomtype ${youngmodulus1} ${youngmodulus2}
