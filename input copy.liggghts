@@ -38,19 +38,19 @@ variable 	poission2	equal	0.3
 variable	CoR11	equal	0.6
 variable	CoR12	equal	0.6	
 variable	CoR21	equal	0.6
-variable	CoR22	equal	0.0
+variable	CoR22	equal	0.6
 
 #### sliding friction coefficient ####
 variable	sf11	equal	0.3
 variable	sf12	equal	0.36
 variable	sf21	equal	0.36
-variable	sf22	equal	0.0
+variable	sf22	equal	0.3
 
 #### rolling friction coefficient ####
 variable	rf11	equal	0.8
 variable	rf12	equal	0.8
 variable	rf21	equal	0.8
-variable	rf22	equal	0.0
+variable	rf22	equal	0.8
 
 #### variable for particle ####
 # distribution of particles
@@ -100,7 +100,7 @@ fix 	m4              all property/global coefficientFriction peratomtypepair ${n
 fix 	m5              all property/global coefficientRollingFriction peratomtypepair ${natoms} ${rf11} ${rf12} ${rf21} ${rf22}
 
 ################################### Generation and Loading of the Geometry .stl #######################################
-fix	pipe 	        all mesh/surface file Pipe.stl 	  type 2 scale 0.001	                                            #load pipe
+fix	pipe 	        all mesh/surface file Pipe.stl 	  type 2 scale 0.001	                                            # load pipe
 fix	screw01	        all mesh/surface file Screw01.stl type 2 scale 0.001								                # Load screw01
 fix	screw02	        all mesh/surface file Screw02.stl type 2 scale 0.001								                # Load screw02
 fix	screw03	        all mesh/surface file Screw03.stl type 2 scale 0.001								                # Load screw03

@@ -38,19 +38,19 @@ variable 	poission2	equal	0.3
 variable	CoR11	equal	0.6
 variable	CoR12	equal	0.6	
 variable	CoR21	equal	0.6
-variable	CoR22	equal	0.0
+variable	CoR22	equal	0.6
 
 ####sliding friction coefficient####
 variable	sf11	equal	0.3
 variable	sf12	equal	0.36
 variable	sf21	equal	0.36
-variable	sf22	equal	0.0
+variable	sf22	equal	0.3
 
 ####rolling friction coefficient####
 variable	rf11	equal	0.8
 variable	rf12	equal	0.8
 variable	rf21	equal	0.8
-variable	rf22	equal	0.0
+variable	rf22	equal	0.8
 
 ####variable for particle####
 #distribution of particles
