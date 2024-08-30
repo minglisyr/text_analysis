@@ -1,0 +1,4 @@
+export DISPLAY=$(ip route | awk '/default/ { print $3 }'):0.0
+export MESA_LOADER_DRIVER_OVERRIDE=i965
+export LIBGL_ALWAYS_SOFTWARE=1
+export XDG_RUNTIME_DIR="/tmp/runtime-mingli"
