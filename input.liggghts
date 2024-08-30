@@ -40,10 +40,10 @@ variable 	poission2	equal	0.3
 ####variable for contact properties####
 
 ####coefficient of restitution####
-variable	CoR11	equal	0.6
-variable	CoR12	equal	0.6	
-variable	CoR21	equal	0.6
-variable	CoR22	equal	0.6
+variable	cor11	equal	0.6
+variable	cor12	equal	0.6	
+variable	cor21	equal	0.6
+variable	cor22	equal	0.6
 
 ####sliding friction coefficient####
 variable	sf11	equal	0.3
@@ -57,6 +57,12 @@ variable	rf12	equal	0.8
 variable	rf21	equal	0.8
 variable	rf22	equal	0.8
 
+####cohesion energy density####
+variable	ced11	equal	1.
+variable	ced12	equal	0.5
+variable	ced21	equal	0.5
+variable	ced22	equal	0.5
+
 ####variable for particle####
 
 #Number of particle radius
@@ -68,7 +74,7 @@ variable	radius2	equal	0.00200	#m
 variable	frac1	equal	0.5		#50%
 variable	frac2	equal	0.5		#50%
 
-variable	density	equal	1200	#kg/m³
+variable	density	equal	4000	#kg/m³
 
 ####filling parameters####
 
@@ -114,13 +120,13 @@ fix 		m1 all property/global youngsModulus peratomtype ${youngmodulus1} ${youngm
 
 fix 		m2 all property/global poissonsRatio peratomtype ${poission1} ${poission2}
 
-fix 		m3 all property/global coefficientRestitution peratomtypepair ${natoms} 0.6 0.6 0.6 0.6
+fix 		m3 all property/global coefficientRestitution peratomtypepair ${natoms} ${cor11} ${cor12} ${cor21} ${cor22}
 
 fix 		m4 all property/global coefficientFriction peratomtypepair ${natoms} ${sf11} ${sf12} ${sf21} ${sf22}
 
 fix 		m5 all property/global coefficientRollingFriction peratomtypepair ${natoms} ${rf11} ${rf12} ${rf21} ${rf22}
 
-fix 		m6 all property/global cohesionEnergyDensity peratomtypepair 2 	    	0	0  0     0
+fix 		m6 all property/global cohesionEnergyDensity peratomtypepair ${natoms} ${ced11} ${ced12} ${ced21} ${ced22}
 
 # heat transfer
 fix 		ftco all property/global thermalConductivity peratomtype 0.25 45.
@@ -131,11 +137,11 @@ fix             heattransfer all heat/gran initial_temperature 300. 400.
 
 ###################################Generation and Loading of the Geometry .stl#######################################
 
-fix		pipe 	        all mesh/surface file Pipe.stl 	type 2  scale 0.001	rotate axis 1. 0. 0. angle 180 temperature 500. #load pipe
+fix		pipe 	        all mesh/surface file Pipe.stl 	type 2  scale 0.001	rotate axis 1. 0. 0. angle 180 temperature 500.  #load pipe
 
-fix		screw 	        all mesh/surface file Screw.stl type 2 scale 0.001	temperature 800.				#Load screw
+fix		screw 	        all mesh/surface file Screw.stl type 2 scale 0.001	temperature 1000.				#Load screw
 
-fix 		walls 	        all wall/gran model hertz tangential history cohesion off rolling_friction epsd2 mesh n_meshes 2 meshes pipe screw temperature 1000.
+fix 		walls 	        all wall/gran model hertz tangential history cohesion off rolling_friction epsd2 mesh n_meshes 2 meshes pipe screw 
 
 fix		Movescrew	all move/mesh mesh screw rotate origin 0 0 0 axis -1. 0. 0. period  ${screwPeriod}	#Rotation of screw
 
@@ -160,17 +166,20 @@ variable dumpstep equal ${dumptime}/${dt}	#Transform to iteration steps
 
 #output settings, include total thermal energy
 compute		rke all erotate/sphere
-thermo_style	custom step atoms ke c_rke f_heattransfer
+variable        cmp equal step/${fillsteps}*100
+thermo_style	custom step atoms ke c_rke f_heattransfer cpu v_cmp
 thermo		${dumpstep}
 thermo_modify	lost ignore norm no
+thermo_modify   format float %6.3f
 
 ###################################Dumping of the data for post-processing to visualize############################
 
 shell 	mkdir post
 
 #Definition of the dump
+run 1
 dump	dmpparticle all custom/vtk ${dumpstep} post/particles_*.vtk id type x y z vx vy vz fx fy fz radius mass f_Temp[0]
-dump	dmppipe all mesh/stl ${dumpstep} post/pipe*.stl pipe 		#dump pipe		
-dump	dmpscrew	all	mesh/stl ${dumpstep} post/screw*.stl  screw #dump screw
+dump	dmppipe all mesh/stl ${dumpstep} post/pipe*.stl pipe 		        #dump pipe		
+dump	dmpscrew	all	mesh/stl ${dumpstep} post/screw*.stl  screw     #dump screw
 ####################################RUN the simulation filling and discharge###########################################################
-run	 ${fillsteps}
+run ${fillsteps}
