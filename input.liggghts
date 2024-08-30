@@ -1,15 +1,10 @@
 ###################################Header for General commands#######################################################
 
 atom_style	granular		#Simulation of particles
-
 boundary	f f f			#fixed boundaries -> particles will be deleted if leaving the simulation box
-
 units		si
-
-communicate	single vel yes	#default
-
-newton		off				#default
-
+communicate	single vel yes	        #default
+newton		off			#default
 
 ###################################System variables##################################################################
 
@@ -54,7 +49,7 @@ variable	CoR22	equal	0.6
 variable	sf11	equal	0.3
 variable	sf12	equal	0.36
 variable	sf21	equal	0.36
-variable	sf22	equal	0.0
+variable	sf22	equal	0.3
 
 ####rolling friction coefficient####
 variable	rf11	equal	0.8
@@ -77,9 +72,9 @@ variable	density	equal	4000	#kg/m³
 
 ####filling parameters####
 
-variable	filltime	equal	10		#seconds	#filltime = discharge time, we fill and discharge at bthe same time
+variable	filltime	equal	5		#seconds	#filltime = discharge time, we fill and discharge at bthe same time
 
-variable	fillmass	equal	4  	#kg
+variable	fillmass	equal	2  	#kg
 
 variable	fillmassrate	equal	${fillmass}/${filltime}	#kg/s
 
@@ -127,13 +122,20 @@ fix 		m5 all property/global coefficientRollingFriction peratomtypepair ${natoms
 
 fix 		m6 all property/global cohesionEnergyDensity peratomtypepair 2 	    	0	0  0     0
 
+# heat transfer
+fix 		ftco all property/global thermalConductivity peratomtype 0.25 45.
+
+fix 		ftca all property/global thermalCapacity peratomtype 1400. 410.
+
+fix             heattransfer all heat/gran initial_temperature 300. 350. heat_source constant 1.0
+
 ###################################Generation and Loading of the Geometry .stl#######################################
 
 fix		pipe 	        all mesh/surface file Pipe.stl 	type 2  scale 0.001	rotate axis 1. 0. 0. angle 180 	#load pipe
 
 fix		screw 	        all mesh/surface file Screw.stl type 2 scale 0.001					#Load screw
 
-fix 		walls 	        all wall/gran model hertz tangential history cohesion sjkr rolling_friction epsd2 mesh n_meshes 2 meshes pipe screw 
+fix 		walls 	        all wall/gran model hertz tangential history cohesion off rolling_friction epsd2 mesh n_meshes 2 meshes pipe screw 
 
 fix		Movescrew	all move/mesh mesh screw rotate origin 0 0 0 axis -1. 0. 0. period  ${screwPeriod}	#Rotation of screw
 
@@ -152,29 +154,23 @@ fix 	ins all insert/stream seed 86028157 distributiontemplate pdd1 &
         mass ${fillmass} massrate ${fillmassrate} overlapcheck yes all_in yes vel constant 0 0 -0.75 &
         insertion_face ins_mesh extrude_length 0.25
 
-
 variable dumptime equal 0.05	# Every 0.05 s 1 image 
 
 variable dumpstep equal ${dumptime}/${dt}	#Transform to iteration steps
 
 #output settings, include total thermal energy
-fix		ts all check/timestep/gran ${dumpstep} 0.1 0.1
 compute		rke all erotate/sphere
-thermo_style	custom step atoms ke c_rke f_ts[1] f_ts[2] vol
+thermo_style	custom step atoms ke c_rke f_heattransfer vol
 thermo		${dumpstep}
 thermo_modify	lost ignore norm no
-compute_modify	thermo_temp dynamic yes
-#fix		ts_check all check/timestep/gran ${dump_rate}*10 0.001 0.001
 
 ###################################Dumping of the data for post-processing to visualize############################
 
 shell 	mkdir post
 
 #Definition of the dump
-dump	dmpparticle all custom ${dumpstep} post/particles_*.liggghts id type x y z vx vy vz fx fy fz radius mass
+dump	dmpparticle all custom/vtk ${dumpstep} post/particles_*.vtk id type x y z vx vy vz fx fy fz radius mass f_Temp[0] f_heatFlux[0]
 dump	dmppipe all mesh/stl ${dumpstep} post/pipe*.stl pipe 		#dump pipe		
-
 dump	dmpscrew	all	mesh/stl ${dumpstep} post/screw*.stl  screw #dump screw
 ####################################RUN the simulation filling and discharge###########################################################
-
 run	 ${fillsteps}
