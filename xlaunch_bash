@@ -3,6 +3,18 @@ export MESA_LOADER_DRIVER_OVERRIDE=i965
 export LIBGL_ALWAYS_SOFTWARE=1
 export XDG_RUNTIME_DIR="/tmp/runtime-mingli"
 
+#- shortcut to run liggghts in parallel
+liggghtspar() { mpirun -np $2 liggghts -in $1; }
+export -f liggghtspar
+
+
+
+
+
+
+
+
+
 export PATH=/home/mingli/bin:$PATH
 export LPP_DIR=$HOME/lpp/src
 export LPP_NPROCS=12
